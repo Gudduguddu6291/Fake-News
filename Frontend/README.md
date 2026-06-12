@@ -44,8 +44,9 @@ src/
 │
 ├── App.jsx
 └── main.jsx
+```
 
-## ⚙️ Installation
+### ⚙️ Installation
 
 ### 1. Clone the Repository
 
