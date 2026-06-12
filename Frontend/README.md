@@ -1,16 +1,69 @@
-# React + Vite
+# FactGuard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+FactGuard is an AI-powered fake news detection web application built with React. It allows users to submit news articles, headlines, or content and receive an analysis of their authenticity along with credibility scores and insights.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Features
 
-## React Compiler
+- Modern and responsive UI
+- News authenticity analysis
+- Credibility score visualization
+- Interactive result cards
+- Smooth animations using Framer Motion
+- Clean navigation interface
+- Mobile-friendly design
+- Tailwind CSS styling
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🛠️ Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Frontend
+- React.js
+- Tailwind CSS
+- Framer Motion
+- Lucide React Icons
+
+---
+
+## 📂 Project Structure
+
+```bash
+src/
+│
+├── components/
+│   ├── Hero.jsx
+│   ├── InputCard.jsx
+│   ├── Navbar.jsx
+│   ├── ResultCard.jsx
+│   └── ScoreBar.jsx
+│
+├── pages/
+│   └── FactGuardPage.jsx
+│
+├── App.jsx
+└── main.jsx
+
+⚙️ Installation
+1. Clone the Repository
+git clone <repository-url>
+cd factguard
+2. Install Dependencies
+npm install
+3. Install Required Packages
+npm install framer-motion lucide-react
+4. Install Tailwind CSS
+npm install tailwindcss @tailwindcss/vite
+
+Configure Tailwind CSS according to the official documentation.
+
+▶️ Run the Project
+
+Start the development server:
+
+npm run dev
+
+The application will be available at:
+
+http://localhost:5173
