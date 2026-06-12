@@ -45,25 +45,47 @@ src/
 ├── App.jsx
 └── main.jsx
 
-⚙️ Installation
-1. Clone the Repository
-    git clone <repository-url>
-    cd factguard
-2. Install Dependencies
+## ⚙️ Installation
+
+### 1. Clone the Repository
+
+```bash
+git clone <repository-url>
+cd factguard
+```
+
+### 2. Install Dependencies
+
+```bash
 npm install
-3. Install Required Packages
+```
+
+### 3. Install Required Packages
+
+```bash
 npm install framer-motion lucide-react
-4. Install Tailwind CSS
+```
+
+### 4. Install Tailwind CSS
+
+```bash
 npm install tailwindcss @tailwindcss/vite
+```
 
 Configure Tailwind CSS according to the official documentation.
 
-▶️ Run the Project
+---
+
+## ▶️ Run the Project
 
 Start the development server:
 
+```bash
 npm run dev
+```
 
 The application will be available at:
 
+```text
 http://localhost:5173
+```
