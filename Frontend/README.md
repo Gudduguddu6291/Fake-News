@@ -47,8 +47,8 @@ src/
 
 ⚙️ Installation
 1. Clone the Repository
-git clone <repository-url>
-cd factguard
+    git clone <repository-url>
+    cd factguard
 2. Install Dependencies
 npm install
 3. Install Required Packages
