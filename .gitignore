@@ -1,0 +1,70 @@
+# Node.js dependencies
+node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+logs/
+*.log
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Testing
+coverage/
+.nyc_output/
+coverage-*
+
+# Editor directories and files
+.vscode/
+.idea/
+.DS_Store
+
+# Build output
+dist/
+build/
+
+# Environment variables
+.env
+.env.*
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Icon?
+
+# Misc
+*.tgz
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Python virtual environment
+venv/
+.env/
+.venv/
+
+# VS Code settings and local history
+.vscode/
+.history/
+
+# Frontend Vite
+node_modules/
+/dist
+
+# Backend node
+Backend/node_modules/
+Backend/dist/
+
+# ML Service
+ML-Service/__pycache__/
+ML-Service/*.py[cod]
+ML-Service/venv/
+ML-Service/.env
