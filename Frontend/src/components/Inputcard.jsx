@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Radar } from "lucide-react";
+import axios from "axios";
 
 const TABS = ["Paste text", "Enter URL", "Upload file"];
 const MAX_CHARS = 5000;
@@ -9,8 +10,17 @@ export default function InputCard({ onAnalyze = () => {}, loading = false }) {
   const [activeTab, setActiveTab] = useState(0);
   const [text, setText] = useState("");
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!text.trim() || loading) return;
+    try{
+      const result=await axios.post('http://localhost:8000/api/predict', { text },{withCredentials: true});
+      console.log(result.data);
+      setText("");
+    }
+    catch(err){
+      console.log(err);
+      setText("");
+    }
     onAnalyze(text);
   };
 

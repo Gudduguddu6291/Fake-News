@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {ShieldCheck, History, ChevronDown, X, User, Sparkles,} from "lucide-react";
+import { signInWithPopup } from "firebase/auth";
+import { auth, provider } from "../utils/firebase";
+import axios from "axios";
 
 const HISTORY_ITEMS = [
   {
@@ -33,6 +36,21 @@ const verdictBadgeClass = {
 };
 
 export default function Navbar() {
+  const handleLogin = async () => {
+    try{
+      const result = await signInWithPopup(auth, provider);
+      await axios.post('http://localhost:8000/api/auth/googleauth', {
+        firebaseUid: result.user.uid,
+        name: result.user.displayName,
+        email: result.user.email,
+        avatar: result.user.photoURL,
+      }, { withCredentials: true });
+      console.log(result);
+    }
+    catch(err){
+      console.log(err);
+    }
+  }
   const [open, setOpen] = useState(false);
 
   return (
@@ -55,11 +73,11 @@ export default function Navbar() {
           <button className="hidden sm:block text-[13px] text-gray-500 hover:bg-gray-100 px-3 py-1.5 rounded-lg transition-colors">
             About
           </button>
-          <button className="hidden sm:flex items-center gap-1.5 text-[13px] font-medium px-4 py-1.5 rounded-lg border border-gray-200 bg-white text-gray-900 hover:bg-gray-50 transition-colors">
+          <button className="hidden sm:flex items-center gap-1.5 text-[13px] font-medium px-4 py-1.5 rounded-lg border border-gray-200 bg-white text-gray-900 hover:bg-gray-50 transition-colors" onClick={handleLogin}>
             <User size={14} />
             Log in
           </button>
-          <button className="hidden sm:block text-[13px] font-medium px-4 py-1.5 rounded-lg bg-[#185FA5] text-white hover:bg-[#1450880] transition-colors">
+          <button className="hidden sm:block text-[13px] font-medium px-4 py-1.5 rounded-lg bg-[#185FA5] text-white hover:bg-[#1450880] transition-colors" onClick={handleLogin}>
             Sign up free
           </button>
 
@@ -142,10 +160,10 @@ export default function Navbar() {
 
               {/* Mobile auth buttons */}
               <div className="flex gap-2 px-3.5 py-2.5 border-b border-gray-100 sm:hidden">
-                <button className="flex-1 flex items-center justify-center gap-1.5 text-[13px] font-medium px-3 py-2 rounded-lg border border-gray-200 bg-white text-gray-900 hover:bg-gray-50 transition-colors">
+                <button className="flex-1 flex items-center justify-center gap-1.5 text-[13px] font-medium px-3 py-2 rounded-lg border border-gray-200 bg-white text-gray-900 hover:bg-gray-50 transition-colors" onClick={handleLogin}>
                   <User size={14} /> Log in
                 </button>
-                <button className="flex-1 text-[13px] font-medium px-3 py-2 rounded-lg bg-[#185FA5] text-white hover:bg-[#145088] transition-colors">
+                <button className="flex-1 text-[13px] font-medium px-3 py-2 rounded-lg bg-[#185FA5] text-white hover:bg-[#145088] transition-colors" onClick={handleLogin}>
                   Sign up free
                 </button>
               </div>

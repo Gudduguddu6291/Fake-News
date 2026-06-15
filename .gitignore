@@ -1,13 +1,23 @@
-# Node.js dependencies
+# Dependencies
 node_modules/
+Backend/node_modules/
+Frontend/node_modules/
+
+# Build output
+dist/
+dist-ssr/
+build/
+Backend/dist/
+Frontend/dist/
 
 # Logs
+logs/
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-logs/
-*.log
+lerna-debug.log*
 
 # Runtime data
 pids/
@@ -15,56 +25,69 @@ pids/
 *.seed
 *.pid.lock
 
-# Testing
-coverage/
-.nyc_output/
-coverage-*
-
-# Editor directories and files
-.vscode/
-.idea/
-.DS_Store
-
-# Build output
-dist/
-build/
-
-# Environment variables
+# Environment and local secrets
 .env
 .env.*
+!.env.example
+!.env.*.example
+*.local
+*.pem
+*.key
+*.crt
+*serviceAccount*.json
+firebase-adminsdk*.json
 
-# OS generated files
-Thumbs.db
-ehthumbs.db
-Icon?
+# Test and coverage output
+coverage/
+coverage-*/
+.nyc_output/
+.vitest/
+htmlcov/
+.pytest_cache/
 
-# Misc
-*.tgz
-
-# Python
+# Python caches and virtual environments
 __pycache__/
 *.py[cod]
 *$py.class
-
-# Python virtual environment
+.Python
 venv/
-.env/
 .venv/
+env/
+.env/
+ENV/
 
-# VS Code settings and local history
+# ML service generated artifacts
+ML-Service/dataset_clean.csv
+ML-Service/*.pkl
+ML-Service/*.joblib
+ML-Service/confusion_matrix.png
+ML-Service/roc_curve.png
+ML-Service/*_matrix.png
+ML-Service/*_curve.png
+ML-Service/ml-service.*.log
+
+# Tool caches
+.cache/
+.parcel-cache/
+.eslintcache
+.vite/
+
+# Editor and OS files
 .vscode/
+.idea/
 .history/
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Icon?
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
-# Frontend Vite
-node_modules/
-/dist
-
-# Backend node
-Backend/node_modules/
-Backend/dist/
-
-# ML Service
-ML-Service/__pycache__/
-ML-Service/*.py[cod]
-ML-Service/venv/
-ML-Service/.env
+# Archives and package output
+*.tgz
+*.tar
+*.tar.gz
+*.zip
