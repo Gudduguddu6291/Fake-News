@@ -1,83 +1,84 @@
-# FactGuard
+# FactGuard Frontend
 
-FactGuard is an AI-powered fake news detection web application built with React. It allows users to submit news articles, headlines, or content and receive an analysis of their authenticity along with credibility scores and insights.
+FactGuard is the React frontend for the Fake News detection app. It provides a polished UI for users to submit content, sign in with Google, and receive a prediction from the backend service.
 
 ---
 
 ## 🚀 Features
 
-- Modern and responsive UI
-- News authenticity analysis
-- Credibility score visualization
-- Interactive result cards
+- Interactive fake news analysis interface
+- Google sign-in with Firebase
 - Smooth animations using Framer Motion
-- Clean navigation interface
-- Mobile-friendly design
-- Tailwind CSS styling
+- Tailwind CSS styling and responsive layout
+- Axios HTTP client for backend communication
+- Prediction result display with confidence and keyword insights
 
 ---
 
-## 🛠️ Tech Stack
+## 🧩 Tech Stack
 
-### Frontend
-- React.js
+- React 19
+- Vite
 - Tailwind CSS
+- Firebase Authentication
+- Axios
 - Framer Motion
 - Lucide React Icons
 
 ---
 
-## 📂 Project Structure
+## 📁 Project Structure
 
 ```bash
-src/
-│
-├── components/
-│   ├── Hero.jsx
-│   ├── InputCard.jsx
-│   ├── Navbar.jsx
-│   ├── ResultCard.jsx
-│   └── ScoreBar.jsx
-│
-├── pages/
-│   └── FactGuardPage.jsx
-│
-├── App.jsx
-└── main.jsx
+Frontend/
+  src/
+    components/
+      Hero.jsx
+      InputCard.jsx
+      Navbar.jsx
+      ResultCard.jsx
+      ScoreBar.jsx
+    context/
+      GlobalContext.jsx
+    pages/
+      Factguardpage.jsx
+    utils/
+      firebase.js
+    App.jsx
+    main.jsx
+  package.json
+  vite.config.js
+  README.md
 ```
 
-### ⚙️ Installation
+---
 
-### 1. Clone the Repository
+## 🔧 Prerequisites
+
+- Node.js 18+ installed
+- npm installed
+- Backend server running on `http://localhost:8000`
+- ML service running on `http://127.0.0.1:5000`
+
+---
+
+## ⚙️ Installation
+
+1. Open a terminal and navigate to the frontend folder:
 
 ```bash
-git clone <repository-url>
-cd factguard
+cd "d:/MERN/Fake News/Frontend"
 ```
 
-### 2. Install Dependencies
+2. Install dependencies:
 
 ```bash
 npm install
 ```
 
-### 3. Install Required Packages
-
-```bash
-npm install framer-motion lucide-react
-```
-
-### 4. Install Tailwind CSS
-
-```bash
-npm install tailwindcss @tailwindcss/vite
-```
-
-Configure Tailwind CSS according to the official documentation.
-
 ---
 
-## ▶️ Run the Project
+## 🚀 Run Locally
 
 Start the development server:
 
@@ -85,11 +86,55 @@ Start the development server:
 npm run dev
 ```
 
-The application will be available at:
+Open the app at:
 
 ```text
 http://localhost:5173
 ```
 
+---
 
-![alt text](Screenshot_12-6-2026_211711_localhost.jpeg)
+## 🔐 Firebase Authentication
+
+Firebase is configured in `src/utils/firebase.js` with environment variables for the API key:
+
+- `VITE_FIREBASE_API_KEY`
+
+The app uses Google sign-in, and the navbar sends authentication data to the backend at:
+
+- `POST http://localhost:8000/api/auth/googleauth`
+
+If you want to use your own Firebase project, update `src/utils/firebase.js` and add the required environment variables.
+
+---
+
+## 🧠 Backend Integration
+
+The frontend sends prediction requests to the backend using Axios:
+
+- `POST http://localhost:8000/api/predict`
+
+Request body:
+
+```json
+{ "text": "Your news content here" }
+```
+
+The backend response is used to populate prediction results in the UI.
+
+---
+
+## 📌 Notes
+
+- CORS is configured for `http://localhost:5173` in the backend.
+- Authentication requests are sent with `withCredentials: true`.
+- The default backend endpoint is `http://localhost:8000`.
+
+---
+
+## 📚 Useful Commands
+
+- `npm run dev` — start development server
+- `npm run build` — build production assets
+- `npm run preview` — preview production build locally
+- `npm run lint` — run ESLint
