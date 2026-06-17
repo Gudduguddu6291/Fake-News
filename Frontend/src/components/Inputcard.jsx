@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Radar } from "lucide-react";
 import axios from "axios";
+import { useGlobal } from "../context/GlobalContext.jsx";
 
 const TABS = ["Paste text", "Enter URL", "Upload file"];
 const MAX_CHARS = 5000;
@@ -9,13 +10,25 @@ const MAX_CHARS = 5000;
 export default function InputCard({ onAnalyze = () => {}, loading = false }) {
   const [activeTab, setActiveTab] = useState(0);
   const [text, setText] = useState("");
+  const { setactualText } = useGlobal();
 
   const handleSubmit = async () => {
     if (!text.trim() || loading) return;
     try{
       const result=await axios.post('http://localhost:8000/api/predict', { text },{withCredentials: true});
-      console.log(result.data);
+      const prediction = result.data.data;
+      console.log(prediction);
       setText("");
+      setactualText({
+        text,
+        verdict: prediction.verdict,
+        confidence: prediction.confidence,
+        fake_probability: prediction.fake_probability,
+        real_probability: prediction.real_probability,
+        real_words: prediction.real_words,
+        fake_words: prediction.fake_words,
+      });
+      
     }
     catch(err){
       console.log(err);
