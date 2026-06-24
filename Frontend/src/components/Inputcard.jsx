@@ -3,23 +3,24 @@ import { motion } from "framer-motion";
 import { Radar } from "lucide-react";
 import axios from "axios";
 import { useGlobal } from "../context/GlobalContext.jsx";
+import { serverUrl } from "../App";
 
-const TABS = ["Paste text", "Enter URL", "Upload file"];
+const TABS = ["Paste text"];
 const MAX_CHARS = 5000;
 
 export default function InputCard({ onAnalyze = () => {}, loading = false }) {
   const [activeTab, setActiveTab] = useState(0);
   const [text, setText] = useState("");
-  const { setactualText } = useGlobal();
+  const { setactualText, setHistory } = useGlobal();
 
   const handleSubmit = async () => {
     if (!text.trim() || loading) return;
     try{
-      const result=await axios.post('http://localhost:8000/api/predict', { text },{withCredentials: true});
+      const result=await axios.post(`${serverUrl}/api/predict`, { text },{withCredentials: true});
       const prediction = result.data.data;
       console.log(prediction);
       setText("");
-      setactualText({
+      const predictionResult = {
         text,
         verdict: prediction.verdict,
         confidence: prediction.confidence,
@@ -27,7 +28,11 @@ export default function InputCard({ onAnalyze = () => {}, loading = false }) {
         real_probability: prediction.real_probability,
         real_words: prediction.real_words,
         fake_words: prediction.fake_words,
-      });
+        _id: prediction._id,
+        createdAt: prediction.createdAt,
+      };
+      setactualText(predictionResult);
+      setHistory((items) => [predictionResult, ...items]);
       
     }
     catch(err){

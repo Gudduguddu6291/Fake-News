@@ -1,8 +1,15 @@
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
 export const isAuth = async (req, res, next) => {
     try {
-        let token = req.cookies.token;
+        const cookieHeader = req.headers.cookie || '';
+        const cookies = Object.fromEntries(
+            cookieHeader
+                .split(';')
+                .map((cookie) => cookie.trim().split('='))
+                .filter(([key, value]) => key && value)
+                .map(([key, value]) => [key, decodeURIComponent(value)])
+        );
+        let token = req.cookies?.token || cookies.token;
         if (!token) {
             return res.status(401).json({ message: 'Unauthorized: No token provided' });
         }

@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import authRouter from './routes/auth.routes.js';
 import predictRouter from './routes/predict.route.js';
+import userRouter from './routes/user.route.js';
 dotenv.config();
 const app = express();
 connectdb();
@@ -19,6 +20,7 @@ app.get('/', (req, res) => {
     res.send('Hello World!');
 });
 app.use('/api/auth', authRouter);
+app.use('/api/user', userRouter);
 app.use('/api/predict',predictRouter);
 app.listen(8000, () => {
     console.log('Server is running on port 8000');

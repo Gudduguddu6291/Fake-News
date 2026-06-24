@@ -5,6 +5,7 @@ const GlobalContext = createContext();
 export const GlobalProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [actualtext, setactualText] = useState(null);
+  const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
 
   return (
@@ -14,6 +15,8 @@ export const GlobalProvider = ({ children }) => {
         setUser,
         actualtext,
         setactualText,
+        history,
+        setHistory,
         loading,
         setLoading,
       }}

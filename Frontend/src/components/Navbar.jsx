@@ -1,33 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {ShieldCheck, History, ChevronDown, X, User, Sparkles,} from "lucide-react";
-import { signInWithPopup } from "firebase/auth";
+import { signInWithPopup, signOut } from "firebase/auth";
 import { auth, provider } from "../utils/firebase";
 import axios from "axios";
-
-const HISTORY_ITEMS = [
-  {
-    id: 1,
-    text: '"Scientists discover cure for common cold using household ingredient…"',
-    verdict: "false",
-    label: "False",
-    time: "2m ago",
-  },
-  {
-    id: 2,
-    text: '"Central bank raises interest rates by 0.25 points in quarterly review"',
-    verdict: "true",
-    label: "Credible",
-    time: "18m ago",
-  },
-  {
-    id: 3,
-    text: '"New study links coffee consumption to reduced heart disease risk"',
-    verdict: "uncertain",
-    label: "Uncertain",
-    time: "1h ago",
-  },
-];
+import { useDispatch, useSelector } from "react-redux";
+import { clearUser, setUserData } from "../redux/userSlice";
+import { useGlobal } from "../context/GlobalContext.jsx";
+import { serverUrl } from "../App";
 
 const verdictBadgeClass = {
   false: "bg-red-50 text-red-800",
@@ -35,22 +15,82 @@ const verdictBadgeClass = {
   uncertain: "bg-amber-50 text-amber-800",
 };
 
+const getVerdictLabel = (verdict) => {
+  const value = String(verdict).toLowerCase();
+  if (verdict === true || value === "true" || value === "real") return "Credible";
+  if (verdict === false || value === "false" || value === "fake") return "False";
+  return "Uncertain";
+};
+
+const normalizeVerdict = (verdict) => {
+  const value = String(verdict).toLowerCase();
+  if (verdict === true || value === "true" || value === "real") return "true";
+  if (verdict === false || value === "false" || value === "fake") return "false";
+  return "uncertain";
+};
+
+const formatHistoryTime = (item) => {
+  if (item.time) return item.time;
+  if (item.createdAt) return new Date(item.createdAt).toLocaleString();
+  return "Just now";
+};
+
 export default function Navbar() {
+  const dispatch = useDispatch();
+  const { userData } = useSelector((state) => state.user);
+  const { history, setHistory, setactualText } = useGlobal();
+
+  useEffect(() => {
+    const loadHistory = async () => {
+      if (!userData) {
+        setHistory([]);
+        return;
+      }
+
+      try {
+        const response = await axios.get(`${serverUrl}/api/user/history`, {
+          withCredentials: true,
+        });
+        setHistory(response.data);
+      } catch (err) {
+        console.log("Error fetching prediction history:", err);
+      }
+    };
+
+    loadHistory();
+  }, [userData, setHistory]);
+
   const handleLogin = async () => {
     try{
       const result = await signInWithPopup(auth, provider);
-      await axios.post('http://localhost:8000/api/auth/googleauth', {
+      const response = await axios.post(`${serverUrl}/api/auth/googleauth`, {
         firebaseUid: result.user.uid,
         name: result.user.displayName,
         email: result.user.email,
         avatar: result.user.photoURL,
       }, { withCredentials: true });
-      console.log(result);
+      dispatch(setUserData(response.data.user));
+      console.log("User logged in:");
     }
     catch(err){
       console.log(err);
     }
   }
+
+  const handleLogout = async () => {
+    try {
+      await axios.get(`${serverUrl}/api/auth/logout`, { withCredentials: true });
+      await signOut(auth);
+      setHistory([]);
+      setactualText(null);
+      dispatch(clearUser());
+      console.log("User logged out:");
+    }
+    catch(err){
+      console.log(err);
+    }
+  }
+
   const [open, setOpen] = useState(false);
 
   return (
@@ -73,13 +113,21 @@ export default function Navbar() {
           <button className="hidden sm:block text-[13px] text-gray-500 hover:bg-gray-100 px-3 py-1.5 rounded-lg transition-colors">
             About
           </button>
-          <button className="hidden sm:flex items-center gap-1.5 text-[13px] font-medium px-4 py-1.5 rounded-lg border border-gray-200 bg-white text-gray-900 hover:bg-gray-50 transition-colors" onClick={handleLogin}>
-            <User size={14} />
-            Log in
-          </button>
-          <button className="hidden sm:block text-[13px] font-medium px-4 py-1.5 rounded-lg bg-[#185FA5] text-white hover:bg-[#1450880] transition-colors" onClick={handleLogin}>
-            Sign up free
-          </button>
+          {userData ? (
+            <button className="hidden sm:flex items-center gap-1.5 text-[13px] font-medium px-4 py-1.5 rounded-lg bg-[#185FA5] text-white hover:bg-[#145088] transition-colors" onClick={handleLogout}>
+              Logout
+            </button>
+          ) : (
+            <>
+              <button className="hidden sm:flex items-center gap-1.5 text-[13px] font-medium px-4 py-1.5 rounded-lg border border-gray-200 bg-white text-gray-900 hover:bg-gray-50 transition-colors" onClick={handleLogin}>
+                <User size={14} />
+                Log in
+              </button>
+              <button className="hidden sm:block text-[13px] font-medium px-4 py-1.5 rounded-lg bg-[#185FA5] text-white hover:bg-[#145088] transition-colors" onClick={handleLogin}>
+                Sign up free
+              </button>
+            </>
+          )}
 
           {/* Hamburger / Recent */}
           <button
@@ -134,7 +182,7 @@ export default function Navbar() {
                   <History size={15} />
                   Recent checks
                   <span className="text-[11px] font-normal text-gray-400 ml-0.5">
-                    {HISTORY_ITEMS.length} items
+                    {history.length} item{history.length === 1 ? "" : "s"}
                   </span>
                 </div>
                 <button
@@ -160,37 +208,60 @@ export default function Navbar() {
 
               {/* Mobile auth buttons */}
               <div className="flex gap-2 px-3.5 py-2.5 border-b border-gray-100 sm:hidden">
-                <button className="flex-1 flex items-center justify-center gap-1.5 text-[13px] font-medium px-3 py-2 rounded-lg border border-gray-200 bg-white text-gray-900 hover:bg-gray-50 transition-colors" onClick={handleLogin}>
-                  <User size={14} /> Log in
-                </button>
-                <button className="flex-1 text-[13px] font-medium px-3 py-2 rounded-lg bg-[#185FA5] text-white hover:bg-[#145088] transition-colors" onClick={handleLogin}>
-                  Sign up free
-                </button>
+                {userData ? (
+                  <button className="flex-1 text-[13px] font-medium px-3 py-2 rounded-lg bg-[#185FA5] text-white hover:bg-[#145088] transition-colors" onClick={handleLogout}>
+                    Logout
+                  </button>
+                ) : (
+                  <>
+                    <button className="flex-1 flex items-center justify-center gap-1.5 text-[13px] font-medium px-3 py-2 rounded-lg border border-gray-200 bg-white text-gray-900 hover:bg-gray-50 transition-colors" onClick={handleLogin}>
+                      <User size={14} /> Log in
+                    </button>
+                    <button className="flex-1 text-[13px] font-medium px-3 py-2 rounded-lg bg-[#185FA5] text-white hover:bg-[#145088] transition-colors" onClick={handleLogin}>
+                      Sign up free
+                    </button>
+                  </>
+                )}
               </div>
 
               {/* History list */}
               <div className="flex flex-col gap-1.5 px-3.5 py-3">
-                {HISTORY_ITEMS.map((item, i) => (
-                  <motion.div
-                    key={item.id}
-                    initial={{ opacity: 0, x: -6 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.05, duration: 0.18 }}
-                    className="flex items-center justify-between gap-2.5 bg-gray-50 hover:border hover:border-gray-200 rounded-lg px-3 py-2.5 cursor-pointer transition-all group"
-                  >
-                    <span className="text-[13px] text-gray-900 truncate min-w-0 flex-1">
-                      {item.text}
-                    </span>
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      <span
-                        className={`text-[11px] font-medium px-2.5 py-0.5 rounded-full ${verdictBadgeClass[item.verdict]}`}
+                {history.length === 0 ? (
+                  <div className="rounded-2xl bg-gray-50 border border-dashed border-gray-200 p-5 text-center text-sm text-gray-500">
+                    No recent checks yet. Analyze some content to see your history here.
+                  </div>
+                ) : (
+                  history.map((item, i) => {
+                    const verdict = normalizeVerdict(item.verdict);
+                    return (
+                      <motion.div
+                        key={item._id || item.id || i}
+                        initial={{ opacity: 0, x: -6 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.05, duration: 0.18 }}
+                        onClick={() => {
+                          setactualText(item);
+                          setOpen(false);
+                        }}
+                        className="flex items-center justify-between gap-2.5 bg-gray-50 hover:border hover:border-gray-200 rounded-lg px-3 py-2.5 cursor-pointer transition-all group"
                       >
-                        {item.label}
-                      </span>
-                      <span className="text-[11px] text-gray-400">{item.time}</span>
-                    </div>
-                  </motion.div>
-                ))}
+                        <span className="text-[13px] text-gray-900 truncate min-w-0 flex-1">
+                          {item.text || item.title || "Untitled check"}
+                        </span>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <span
+                            className={`text-[11px] font-medium px-2.5 py-0.5 rounded-full ${verdictBadgeClass[verdict]}`}
+                          >
+                            {getVerdictLabel(item.verdict)}
+                          </span>
+                          <span className="text-[11px] text-gray-400">
+                            {formatHistoryTime(item)}
+                          </span>
+                        </div>
+                      </motion.div>
+                    );
+                  })
+                )}
               </div>
             </motion.div>
           </>

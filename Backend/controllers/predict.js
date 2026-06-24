@@ -1,3 +1,4 @@
+import Response from "../models/Response.js";
 export const detectFakeNews = async (req, res) => {
   try {
     const { text } = req.body;
@@ -27,9 +28,23 @@ export const detectFakeNews = async (req, res) => {
       });
     }
 
+    const savedResponse = await Response.create({
+      user: req.userId,
+      text,
+      verdict: mlData.verdict,
+      confidence: mlData.confidence,
+      real_probability: mlData.real_probability,
+      fake_probability: mlData.fake_probability,
+    });
+
     return res.status(200).json({
       success: true,
-      data: mlData,
+      data: {
+        ...mlData,
+        _id: savedResponse._id,
+        text: savedResponse.text,
+        createdAt: savedResponse.createdAt,
+      },
     });
   } catch (error) {
     console.error("ML Service Error:", error.message);
@@ -41,4 +56,3 @@ export const detectFakeNews = async (req, res) => {
     });
   }
 };
-
